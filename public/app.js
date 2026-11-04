@@ -8,7 +8,7 @@
   const KEY = 'pic-to-link-preview-v1';
   const $ = id => document.getElementById(id);
   const safeText = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  const monthKey = () => new Date().toISOString().slice(0,7);
+  const monthKey = () => {const now=new Date();return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');};
   const newId = () => crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now();
   const initial = {profile:'Your workspace',images:[],registerUsage:{},plan:'free'};
   let state;
@@ -122,13 +122,19 @@
   async function canvasFromFile(file) {
     if(!file?.type?.startsWith('image/'))throw Error('Choose an image file.');
     if(file.size>12*1024*1024)throw Error('Please choose an image smaller than 12 MB.');
-    const bmp=await createImageBitmap(file);
-    const max=1100,scale=Math.min(1,max/Math.max(bmp.width,bmp.height));
+    let bmp, objectUrl;
+    if(typeof createImageBitmap==='function')bmp=await createImageBitmap(file);
+    else {
+      objectUrl=URL.createObjectURL(file);
+      bmp=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Could not open image.'));img.src=objectUrl;});
+    }
+    const max=1100,scale=Math.min(1,max/Math.max(bmp.width||bmp.naturalWidth,bmp.height||bmp.naturalHeight));
     const c=document.createElement('canvas');
-    c.width=Math.max(1,Math.round(bmp.width*scale));
-    c.height=Math.max(1,Math.round(bmp.height*scale));
+    c.width=Math.max(1,Math.round((bmp.width||bmp.naturalWidth)*scale));
+    c.height=Math.max(1,Math.round((bmp.height||bmp.naturalHeight)*scale));
     c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
     bmp.close?.();
+    if(objectUrl)URL.revokeObjectURL(objectUrl);
     return c;
   }
   function processCanvas(c,origin) {
@@ -224,7 +230,7 @@
       $('scannerStage').classList.add('video-on');$('cameraPlaceholder').classList.add('hide');
       $('cameraBadge').classList.add('live');$('cameraBadge').innerHTML='<span class="status-dot"></span> Camera live';
       $('scanLine').classList.add('active');$('scanTag').innerHTML='<span class="tiny-pulse"></span> Looking for artwork...';
-      if(!scanTimer)scanTimer=setInterval(()=>{if(!document.hidden&&!document.querySelector('.dialog-overlay:not([hidden])')&&location.hash!=='#toolbox')scanFrame(false);},2600);
+      if(!scanTimer)scanTimer=setInterval(()=>{if(!document.hidden&&!document.querySelector('.dialog-overlay:not([hidden])')&&(!location.hash||location.hash==='#scan'))scanFrame(false);},2600);
       return true;
     } catch(err) {
       $('cameraBadge').innerHTML='<span class="status-dot"></span> Permission needed';
