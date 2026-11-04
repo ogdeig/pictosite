@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d1021">
+  <meta name="description" content="Pic To Link turns ordinary images into connected experiences. Scan artwork, discover links, and register your own images.">
+  <title>Pic To Link — Every image can take you somewhere.</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#scan" aria-label="Pic To Link home">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span class="brand-name"><b>Pic</b><i>To</i><b>Link</b></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#scan" data-nav="scan">Scanner</a>
+      <a href="#toolbox" data-nav="toolbox">My Toolbox</a>
+      <a href="#pricing" data-nav="pricing">Pricing</a>
+      <a href="#about" data-nav="about">How it works</a>
+    </nav>
+    <button type="button" class="top-action" id="topToolbox">My Toolbox <span aria-hidden="true">↗</span></button>
+  </header>
+
+  <main>
+    <section class="view active" id="view-scan" data-view="scan">
+      <div class="home-content">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot"></span> THE WORLD IS YOUR LINK</div>
+          <h1>Every image can <em>take you somewhere.</em></h1>
+          <p>Point your camera at a T-shirt, hat, poster, sticker, or artwork. Find the link behind the design—without a QR code in sight.</p>
+          <div class="benefits"><span><b>✓</b> Unlimited free scans</span><span><b>✓</b> No account required</span></div>
+          <div class="hero-aside"><span class="mini-icon">✦</span><div><b>Made for the real world.</b><br>Scan a physical design or upload a picture from your device.</div></div>
+        </div>
+
+        <div class="scanner-shell">
+          <div class="scanner-header">
+            <div class="scanner-header-left"><span class="device-dot"></span><span>LIVE IMAGE SCANNER</span></div>
+            <span id="cameraBadge" class="camera-status"><span class="status-dot"></span> Camera idle</span>
+          </div>
+          <div class="scanner-stage" id="scannerStage">
+            <video id="cameraVideo" muted playsinline autoplay aria-label="Live camera view"></video>
+            <div class="stage-grid" aria-hidden="true"></div>
+            <div class="scan-corners" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <div class="scan-line" id="scanLine" aria-hidden="true"></div>
+            <div class="camera-placeholder" id="cameraPlaceholder">
+              <div class="lens-illustration"><div class="lens-inner"><div class="lens-pupil"></div></div></div>
+              <strong>Ready when you are.</strong>
+              <span>Enable your camera to discover what's behind an image.</span>
+              <button type="button" id="enableCamera" class="btn btn-primary">Enable camera <span aria-hidden="true">↗</span></button>
+            </div>
+            <div class="scan-tag" id="scanTag"><span class="tiny-pulse"></span> Waiting for an image...</div>
+          </div>
+          <div class="scanner-actions">
+            <button type="button" class="btn btn-primary scan-main" id="scanNow"><span class="button-icon">◎</span> Scan now</button>
+            <button type="button" class="btn btn-secondary" id="uploadButton"><span class="button-icon">⇧</span> Upload image</button>
+          </div>
+          <div class="scanner-footer"><span><span class="violet-dot"></span> Private by design</span><span>Powered by visual recognition <span class="sparkle">✦</span></span></div>
+          <input type="file" id="imageUpload" accept="image/*" hidden>
+          <canvas id="cameraCanvas" hidden></canvas>
+        </div>
+      </div>
+      <div class="below-hero">
+        <div class="stat-strip">
+          <div><strong>01</strong><span>Point or upload</span></div><span class="strip-line"></span>
+          <div><strong>02</strong><span>We look for a match</span></div><span class="strip-line"></span>
+          <div><strong>03</strong><span>Discover the link</span></div>
+        </div>
+        <p class="preview-note"><span>●</span> Early-access preview: image matching currently works with artwork registered in this browser. Shared accounts, cross-device matching, payments, and automated content moderation require the Cloudflare backend before public launch.</p>
+      </div>
+    </section>
+
+    <section class="view page-view" id="view-toolbox" data-view="toolbox">
+      <div class="page-heading"><div class="eyebrow">YOUR CREATOR SPACE</div><h2>My <em>Toolbox.</em></h2><p>Your artwork. Your destinations. Your control.</p></div>
+      <div class="toolbox-layout">
+        <aside class="toolbox-sidebar panel">
+          <span class="panel-overline">LOCAL PREVIEW ACCOUNT</span>
+          <div class="avatar" id="profileAvatar">P</div>
+          <h3 id="profileName">Your workspace</h3>
+          <p class="muted">Images saved in this browser during the preview.</p>
+          <div class="plan-pill"><span class="tiny-pulse"></span><span id="currentPlanName">Free plan</span></div>
+          <div class="quota"><div><span>Registrations this month</span><b id="quotaText">0 / 1</b></div><div class="quota-track"><span id="quotaBar"></span></div></div>
+          <button class="btn btn-soft full" type="button" id="newImageButton">+ Register image</button>
+          <button class="text-link" type="button" id="changeProfile">Edit display name</button>
+        </aside>
+        <section class="toolbox-main">
+          <div class="section-row"><div><h3>Registered images</h3><p>Update your destination links any time.</p></div><span id="imageCountBadge" class="count-pill">0 images</span></div>
+          <div id="imagesGrid" class="image-grid"></div>
+          <div class="toolbox-note">An image registration is different from a scan. Scans are always free. Updating an existing URL never uses another registration.</div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view page-view" id="view-pricing" data-view="pricing">
+      <div class="page-heading center"><div class="eyebrow">SIMPLE & TRANSPARENT</div><h2>Make every image <em>count.</em></h2><p>Scanning is always free. Choose a plan when you're ready to connect more artwork.</p></div>
+      <div class="billing-control"><span id="monthlyLabel" class="billing-active">Monthly</span><button id="billingToggle" type="button" class="toggle" role="switch" aria-checked="false" aria-label="Toggle yearly billing"><span></span></button><span id="yearlyLabel">Yearly</span><span class="save-badge">2 MONTHS FREE</span></div>
+      <div class="pricing-grid" id="pricingGrid"></div>
+      <div class="pricing-explain panel"><div><h3>Everything starts free.</h3><p>Unlimited scans, no app store, and no account needed to discover links. You only need a creator account to register artwork.</p></div><button type="button" class="btn btn-secondary" id="freeToolboxButton">Explore free Toolbox →</button></div>
+    </section>
+
+    <section class="view page-view" id="view-about" data-view="about">
+      <div class="page-heading center"><div class="eyebrow">THE IDEA</div><h2>No code. <em>Just the picture.</em></h2><p>Pic To Link is a visual link registry. Printed designs stay exactly the same; our scanner finds their digital destination.</p></div>
+      <div class="steps-grid">
+        <div class="step-card panel"><div class="step-number">01</div><div class="step-icon">◎</div><h3>Scan or upload</h3><p>Point your phone at a design, or choose an image already on your device.</p></div>
+        <div class="step-card panel"><div class="step-number">02</div><div class="step-icon">✧</div><h3>Find its connection</h3><p>We compare its visual fingerprint with artwork people have registered.</p></div>
+        <div class="step-card panel"><div class="step-number">03</div><div class="step-icon">↗</div><h3>Follow the link</h3><p>When a match is found, choose whether to open its connected website.</p></div>
+      </div>
+      <div class="faq-panel panel">
+        <h3>Good to know</h3>
+        <details><summary>Does the artwork need a QR code?</summary><p>No. Pic To Link is designed to identify the appearance of the artwork itself. The early preview uses basic fingerprints; robust matching on printed or distorted images remains under development.</p></details>
+        <details><summary>Do I have to sign in to scan?</summary><p>No. Scanning is free and doesn't require an account.</p></details>
+        <details><summary>Can I change a linked website later?</summary><p>Yes. Open My Toolbox and edit the link. Editing an existing registration never uses another image allowance.</p></details>
+        <details><summary>Who can register a design?</summary><p>Only someone who has permission to use the artwork and connect the destination. A public launch will include verification, content review, and a dispute process.</p></details>
+      </div>
+    </section>
+
+    <section class="view page-view" id="view-admin" data-view="admin">
+      <div class="page-heading"><div class="eyebrow">OWNER WORKSPACE • PREVIEW</div><h2>Administration <em>preview.</em></h2><p>A design of the owner dashboard. Account creation requires the secure backend before launch.</p></div>
+      <div class="admin-layout">
+        <div class="panel admin-form">
+          <h3>Invite a complimentary user</h3>
+          <p class="muted">VIP accounts can register images at no charge.</p>
+          <label>Email address<input type="email" id="vipEmail" placeholder="creator@example.com"></label>
+          <label>Registration limit<select id="vipLimit"><option>Unlimited</option><option>10 images</option><option>50 images</option><option>100 images</option></select></label>
+          <label>Access expires<select id="vipExpiry"><option>Never</option><option>30 days</option><option>90 days</option><option>1 year</option></select></label>
+          <button class="btn btn-primary full" type="button" id="vipInvite">Preview invitation</button>
+        </div>
+        <div class="panel admin-info">
+          <span class="panel-overline">HOW OWNER INVITES WILL WORK</span>
+          <h3>Free access. Your rules.</h3>
+          <ul><li>Enter an email address.</li><li>Generate a one-time temporary password.</li><li>Set unlimited or custom image registration limits.</li><li>Require a new password on first sign-in.</li><li>Revoke or extend access at any time.</li></ul>
+          <div class="security-note">Security first: these controls won't create real users until owner authentication and Cloudflare D1 are configured.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-brand">Pic<span>To</span>Link <small>✦</small></div><p>Every image can take you somewhere.</p><button id="adminPreviewLink" class="foot-admin" type="button">Admin preview</button></footer>
+
+  <div class="dialog-overlay" id="resultOverlay" hidden><div class="dialog panel" role="dialog" aria-modal="true" aria-labelledby="resultTitle"><button type="button" class="close-dialog" data-close="resultOverlay" aria-label="Close">×</button><div id="resultContent"></div></div></div>
+  <div class="dialog-overlay" id="registerOverlay" hidden><div class="dialog panel" role="dialog" aria-modal="true" aria-labelledby="registerTitle"><button type="button" class="close-dialog" data-close="registerOverlay" aria-label="Close">×</button><span class="panel-overline">CONNECT YOUR ARTWORK</span><h2 id="registerTitle">Register an image</h2><p class="muted">Connect a safe website to your artwork. This preview keeps registration data on this device.</p><div id="registrationPreview" class="registration-preview"></div><form id="registerForm"><label>Artwork name<input id="imageTitleInput" maxlength="80" required placeholder="e.g. My favorite T-shirt"></label><label>Connected website URL<input id="imageUrlInput" type="url" required placeholder="https://example.com"></label><label class="check-row"><input id="rightsConfirm" type="checkbox" required><span>I own this image or have the rights to register and link it.</span></label><button class="btn btn-primary full" type="submit">Register this image →</button></form></div></div>
+  <div class="dialog-overlay" id="editOverlay" hidden><div class="dialog panel" role="dialog" aria-modal="true" aria-labelledby="editTitle"><button type="button" class="close-dialog" data-close="editOverlay" aria-label="Close">×</button><span class="panel-overline">MY TOOLBOX</span><h2 id="editTitle">Edit destination</h2><p class="muted">URL changes are always free for your active registrations.</p><form id="editForm"><label>Image name<input id="editNameInput" maxlength="80" required></label><label>Destination URL<input id="editUrlInput" type="url" required></label><button class="btn btn-primary full" type="submit">Save changes →</button><button type="button" class="btn btn-quiet full" id="deactivateImage">Pause this image</button></form></div></div>
+  <div class="dialog-overlay" id="profileOverlay" hidden><div class="dialog panel" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button type="button" class="close-dialog" data-close="profileOverlay" aria-label="Close">×</button><span class="panel-overline">LOCAL PROFILE</span><h2 id="profileTitle">Your name</h2><p class="muted">This is just for the browser-local preview.</p><form id="profileForm"><label>Display name<input id="profileInput" required maxlength="40" placeholder="e.g. Clint"></label><button class="btn btn-primary full" type="submit">Save profile →</button></form></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
