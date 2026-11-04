@@ -1,0 +1,10 @@
+{
+  "name": "Pic To Link",
+  "short_name": "Pic To Link",
+  "description": "Scan an image. Discover its connection.",
+  "start_url": "/#scan",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0d1021"
+}
